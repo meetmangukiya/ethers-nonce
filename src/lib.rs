@@ -30,6 +30,14 @@ where
         }
     }
 
+    /// initialize the nonce
+    pub async fn initialize_nonce(
+        &self,
+        block: Option<BlockId>,
+    ) -> Result<U256, NonceManagerError<M>> {
+        self.get_or_init_nonce(block).await
+    }
+
     /// Returns the next nonce to be used
     pub async fn next(&self) -> U256 {
         let read_guard = self.nonce.read().await;
