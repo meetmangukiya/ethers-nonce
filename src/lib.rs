@@ -97,13 +97,13 @@ where
         tx: &mut TypedTransaction,
         block: Option<BlockId>,
     ) -> Result<(), Self::Error> {
-        let mut write_guard = self.nonce.write().await;
-        let mut nonce = *write_guard;
-
         if tx.nonce().is_none() {
             nonce = self.get_or_init_nonce(block).await?;
             tx.set_nonce(nonce);
         }
+
+        let mut write_guard = self.nonce.write().await;
+        let mut nonce = *write_guard;
 
         let res = self
             .inner()
@@ -126,14 +126,14 @@ where
     ) -> Result<PendingTransaction<'_, Self::Provider>, Self::Error> {
         let mut tx = tx.into();
 
-        let mut write_guard = self.nonce.write().await;
-        let mut nonce = *write_guard;
-
         if tx.nonce().is_none() {
             nonce = self.get_or_init_nonce(block).await?;
             tx.set_nonce(nonce);
         }
 
+        let mut write_guard = self.nonce.write().await;
+        let mut nonce = *write_guard;
+        
         let res = match self.inner.send_transaction(tx.clone(), block).await {
             Ok(tx_hash) => Ok(tx_hash),
             Err(err) => {
