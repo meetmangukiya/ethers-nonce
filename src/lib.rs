@@ -98,7 +98,7 @@ where
         block: Option<BlockId>,
     ) -> Result<(), Self::Error> {
         if tx.nonce().is_none() {
-            nonce = self.get_or_init_nonce(block).await?;
+            let nonce = self.get_or_init_nonce(block).await?;
             tx.set_nonce(nonce);
         }
 
@@ -127,7 +127,7 @@ where
         let mut tx = tx.into();
 
         if tx.nonce().is_none() {
-            nonce = self.get_or_init_nonce(block).await?;
+            let nonce = self.get_or_init_nonce(block).await?;
             tx.set_nonce(nonce);
         }
 
