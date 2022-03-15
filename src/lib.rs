@@ -102,7 +102,6 @@ where
 
         if tx.nonce().is_none() {
             nonce = self.get_or_init_nonce(block).await?;
-            write_guard = self.nonce.write().await;
             tx.set_nonce(nonce);
         }
 
