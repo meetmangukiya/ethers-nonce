@@ -97,7 +97,9 @@ where
         tx: &mut TypedTransaction,
         block: Option<BlockId>,
     ) -> Result<(), Self::Error> {
-        if tx.nonce().is_none() {
+        let nonce_set = tx.nonce().is_some();
+        
+        if !nonce_set {
             let nonce = self.get_or_init_nonce(block).await?;
             tx.set_nonce(nonce);
         }
@@ -111,7 +113,9 @@ where
             .await
             .map_err(FromErr::from)?;
 
-        *write_guard = nonce + U256::from(1u32);
+        if !nonce_set {
+            *write_guard = nonce + U256::from(1u32);        
+        }
 
         Ok(res)
     }
@@ -126,7 +130,9 @@ where
     ) -> Result<PendingTransaction<'_, Self::Provider>, Self::Error> {
         let mut tx = tx.into();
 
-        if tx.nonce().is_none() {
+        let nonce_set = tx.nonce().is_some();
+     
+        if !nonce_set {
             let nonce = self.get_or_init_nonce(block).await?;
             tx.set_nonce(nonce);
         }
@@ -152,7 +158,9 @@ where
             }
         }?;
 
-        *write_guard = nonce + U256::from(1u32);
+        if !nonce_set {
+            *write_guard = nonce + U256::from(1u32);
+        }        
 
         Ok(res)
     }
